@@ -1,0 +1,7 @@
+out/
+fixtures/*.jpg
+fixtures/*.png
+fixtures/*.pdf
+__pycache__/
+*.pyc
+*.bak
