@@ -1,0 +1,146 @@
+[
+ {
+  "page": 5,
+  "box": [
+   218,
+   1005,
+   1234,
+   1063
+  ],
+  "text": "2025        *REG NOT FOUND FOR SUBJECT PREMISES*",
+  "note": "звёздочка читалась как “ — grep по *REG NOT FOUND терял строку",
+  "source": "прочитано зрением модели"
+ },
+ {
+  "page": 2,
+  "box": [
+   1135,
+   915,
+   1803,
+   946
+  ],
+  "text": "I have compared the attached copy with the original document",
+  "note": "абзац заверения, построчно",
+  "source": "прочитано зрением модели"
+ },
+ {
+  "page": 2,
+  "box": [
+   1135,
+   943,
+   1769,
+   973
+  ],
+  "text": "in the custody of the Office of Rent Administration of the",
+  "note": "абзац заверения, построчно",
+  "source": "прочитано зрением модели"
+ },
+ {
+  "page": 2,
+  "box": [
+   1136,
+   971,
+   1790,
+   1002
+  ],
+  "text": "Division of Housing and Community Renewal and do hereby",
+  "note": "абзац заверения, построчно",
+  "source": "прочитано зрением модели"
+ },
+ {
+  "page": 2,
+  "box": [
+   1135,
+   1000,
+   1806,
+   1031
+  ],
+  "text": "certify that the same is a true and correct copy thereof. The",
+  "note": "абзац заверения, построчно",
+  "source": "прочитано зрением модели"
+ },
+ {
+  "page": 2,
+  "box": [
+   1136,
+   1028,
+   1806,
+   1059
+  ],
+  "text": "acceptance of a registration statement or other filed document",
+  "note": "абзац заверения, построчно",
+  "source": "прочитано зрением модели"
+ },
+ {
+  "page": 2,
+  "box": [
+   1136,
+   1057,
+   1765,
+   1085
+  ],
+  "text": "and the certification of its existence is not a certification of",
+  "note": "абзац заверения, построчно",
+  "source": "прочитано зрением модели"
+ },
+ {
+  "page": 2,
+  "box": [
+   1137,
+   1087,
+   1743,
+   1113
+  ],
+  "text": "the correctness of the statements contained therein.",
+  "note": "абзац заверения, построчно",
+  "source": "прочитано зрением модели"
+ },
+ {
+  "page": 2,
+  "box": [
+   1139,
+   1114,
+   1757,
+   1142
+  ],
+  "text": "I am an employee of DHCR duly designated to make this",
+  "note": "абзац заверения, построчно",
+  "source": "прочитано зрением модели"
+ },
+ {
+  "page": 2,
+  "box": [
+   1139,
+   1153,
+   1709,
+   1170
+  ],
+  "text": "certification.",
+  "note": "абзац заверения, построчно",
+  "source": "прочитано зрением модели"
+ },
+ {
+  "page": 2,
+  "box": [
+   1147,
+   1183,
+   1402,
+   1212
+  ],
+  "text": "Date: 2/24/26",
+  "note": "дата от руки; сверена с печатной REQUEST DATE: 02/24/2026",
+  "source": "прочитано зрением модели"
+ },
+ {
+  "page": 2,
+  "box": [
+   1360,
+   1208,
+   1630,
+   1240
+  ],
+  "text": "DHCR Certifying Officer",
+  "note": "OCR прочёл SHCR (уверенность 24)",
+  "source": "прочитано зрением модели"
+ }
+]

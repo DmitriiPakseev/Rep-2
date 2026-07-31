@@ -5,3 +5,4 @@ fixtures/*.pdf
 __pycache__/
 *.pyc
 *.bak
+!corrections/
