@@ -225,7 +225,8 @@ def _drop_rules(mask, min_len):
     return out
 
 
-def check_coverage(img_path, words, cell=8, min_cells=12):
+def check_coverage(img_path, words, cell=8, min_cells=12,
+                   min_density=0.10, margin=0.02):
     """
     Обратная сторона проверки чернил: есть ли в оригинале чернила, которым
     НЕ соответствует ни одного слова слоя.
@@ -247,17 +248,31 @@ def check_coverage(img_path, words, cell=8, min_cells=12):
     px = (gray[:ch * cell, :cw * cell] < DARK)
     med_h = float(np.median([wd['h'] for wd in words])) if words else 16.0
     px = _drop_rules(px, min_len=max(24, int(med_h * 2.5)))
-    ink = px.reshape(ch, cell, cw, cell).any(axis=(1, 3))
 
+    # Ячейка считается текстом по ПЛОТНОСТИ, а не по одному тёмному пикселю.
+    # На снимке телефона `any()` метил чернилами ореолы сглаживания и
+    # промежутки между строками: страница распознавалась целиком, а
+    # проверка выдавала 30 полос «текст есть, слов нет» — все ложные.
+    dens = px.reshape(ch, cell, cw, cell).mean(axis=(1, 3))
+    ink = dens >= min_density
+
+    # Рамки слов расширяем на долю высоты строки: tesseract режет их
+    # вплотную к глифам, и краевые ячейки иначе остаются непокрытыми.
+    pad = max(1, int(round(med_h * 0.35)))
     cov = np.zeros((ch, cw), dtype=bool)
     for wd in words:
-        l = int(max(0, wd['left']) // cell)
-        t = int(max(0, wd['top']) // cell)
-        r = int(min(w, wd['left'] + wd['w']) // cell) + 1
-        b = int(min(h, wd['top'] + wd['h']) // cell) + 1
+        l = int(max(0, wd['left'] - pad) // cell)
+        t = int(max(0, wd['top'] - pad) // cell)
+        r = int(min(w, wd['left'] + wd['w'] + pad) // cell) + 1
+        b = int(min(h, wd['top'] + wd['h'] + pad) // cell) + 1
         cov[t:b, l:r] = True
 
     un = ink & ~cov
+    # Поля листа: у снимка телефона по краю идёт тень и обрез бумаги —
+    # это чернила, которым по определению не соответствует текст.
+    my, mx = int(ch * margin) + 1, int(cw * margin) + 1
+    un[:my, :] = False; un[-my:, :] = False
+    un[:, :mx] = False; un[:, -mx:] = False
 
     rows = un.sum(axis=1)
     bands, cur = [], None

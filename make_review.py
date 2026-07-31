@@ -124,9 +124,34 @@ PAGE = """<!doctype html>
 """
 
 
+MAX_W = 1500          # ширина вырезки в форме, пикселей
+JPEG_Q = 82
+
+
 def data_uri(path):
-    with open(path, 'rb') as f:
-        return 'data:image/png;base64,' + base64.b64encode(f.read()).decode()
+    """
+    Вырезка для показа: ужимается по ширине и кладётся JPEG.
+
+    Без этого форма по настоящему скану телефона весит сотни мегабайт и
+    браузер её не открывает: 53 вырезки со страницы 2346x3047, каждая
+    увеличена вчетверо и вшита как PNG, дали 106 МБ. На качество
+    распознавания это не влияет — движок читает исходный файл вырезки,
+    а не то, что вшито в страницу.
+    """
+    from PIL import Image
+    import io
+    try:
+        with Image.open(path) as im:
+            im = im.convert('RGB')
+            if im.width > MAX_W:
+                h = max(1, round(im.height * MAX_W / im.width))
+                im = im.resize((MAX_W, h), Image.LANCZOS)
+            buf = io.BytesIO()
+            im.save(buf, 'JPEG', quality=JPEG_Q, optimize=True)
+        return 'data:image/jpeg;base64,' + base64.b64encode(buf.getvalue()).decode()
+    except Exception:
+        with open(path, 'rb') as f:
+            return 'data:image/png;base64,' + base64.b64encode(f.read()).decode()
 
 
 def render_item(i, r, crops_dir):

@@ -163,6 +163,32 @@ def load_pages(path, work, pages_spec):
     return [{'n': 1, 'img': path, 'dpi': None, 'note': ''}], 'одиночное изображение'
 
 
+CROP_TARGET_H = 64      # желаемая высота строки в вырезке, пикселей
+CROP_MAX_W = 3000       # предел ширины вырезки
+
+
+def save_crop(im, box, path):
+    """
+    Вырезка на диск с осмысленным масштабом.
+
+    Увеличение вслепую вчетверо годилось на скане 1700 px, но на снимке
+    телефона 2346x3047 давало полосы 9400 px шириной: вырезки распухали,
+    а распознавание на них разваливалось — тот же перебор масштаба, из-за
+    которого `2026` читалось как `2926`. Масштаб считается от высоты
+    строки и ограничен сверху.
+    """
+    crop = im.crop(box)
+    h = max(1, crop.height)
+    k = CROP_TARGET_H / h if h < CROP_TARGET_H else 1.0
+    k = min(k if k > 1 else 1.0, 4.0)
+    if crop.width * k > CROP_MAX_W:
+        k = CROP_MAX_W / crop.width
+    if abs(k - 1.0) > 0.05:
+        crop = crop.resize((max(1, round(crop.width * k)),
+                            max(1, round(crop.height * k))), Image.LANCZOS)
+    crop.save(path)
+
+
 # ------------------------------------------------------ поиск слабых мест
 
 def weak_lines(by_line, second=None):
@@ -343,10 +369,8 @@ def main():
                 if box[2] - box[0] < 5 or box[3] - box[1] < 5:
                     continue
                 fn = f'p{n:03d}_{k:02d}.png'
-                crop = im.crop(box)
                 # изоляция вырезки заметно поднимает качество (реестр 8.3.14)
-                crop.resize((crop.width * 4, crop.height * 4), Image.LANCZOS) \
-                    .save(os.path.join(crops_dir, fn))
+                save_crop(im, box, os.path.join(crops_dir, fn))
                 review.append({
                     'id': f'{n}_{k}', 'page': n, 'box': s['box'],
                     'crop': fn, 'critical': s['critical'], 'cues': s['cues'],
@@ -369,9 +393,7 @@ def main():
                 if box[2] - box[0] < 5 or box[3] - box[1] < 5:
                     continue
                 fn = f'p{n:03d}_miss{j:02d}.png'
-                crop = im.crop(box)
-                crop.resize((crop.width * 4, crop.height * 4), Image.LANCZOS) \
-                    .save(os.path.join(crops_dir, fn))
+                save_crop(im, box, os.path.join(crops_dir, fn))
                 review.append({
                     'id': f'{n}_miss{j}', 'page': n, 'box': [l, t, r, b],
                     'crop': fn, 'critical': True,
